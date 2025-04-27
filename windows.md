@@ -1,7 +1,87 @@
-# 기본앱 삭제
 
-```shell
-Get-AppxPackage | Select Name, PackageFamilyName
+## Chris Titus Tech - Windows Utility 추천!
+
+- GUI로 정리 가능. Bloatware 제거, 서비스 비활성화, 최적화까지 한번에 가능.
+- GitHub: https://github.com/ChrisTitusTech/winutil
+- PowerShell에 아래 명령어 입력
+```powershell
+irm https://christitus.com/win | iex
+```
+
+## O&O AppBuster 사용 (GUI 방식, 쉬움)
+
+- 기본 앱 한 번에 제거 가능
+- 원클릭 제거 / 복원도 가능해서 실수해도 안심
+- https://www.oo-software.com/en/ooappbuster
+
+## 광고 & 텔레메트리 차단
+
+- O&O ShutUp10++ (무료툴)
+- 광고, 피드백, 자동업데이트, 위치추적 등 완전 비활성화 가능
+- 추천 옵션: "모든 권장 설정 적용" 클릭
+- https://www.oo-software.com/en/download/current/ooshutup10
+
+## 자동 업데이트 비활성화 (선택사항)
+
+- gpedit.msc →
+컴퓨터 구성 → 관리 템플릿 → Windows 업데이트 →
+- "자동 업데이트 구성" → "사용" → "2 - 알림만 하고 자동 설치 안 함"
+
+## 시작 프로그램 & 서비스 정리
+
+- Ctrl + Shift + Esc → 작업 관리자 → [시작프로그램] 탭에서 비활성화
+- services.msc 입력 → 다음 서비스들을 비활성화 또는 수동으로 변경 (주의해서!)
+
+| 서비스 이름 | 설명 | 설정 권장값 |
+|-------------|------|-------------|
+|Connected User Experiences | 사용 데이터 전송 관련 | 사용 안 함|
+|Diagnostics Tracking | 진단 데이터 수집 | 사용 안 함|
+|Windows Search | 검색 인덱싱 (잘 안 쓰면 꺼도 됨) | 사용 안 함|
+|Print Spooler | 프린터 안 쓰면 | 사용 안 함|
+|Remote Registry | 보안상 꺼두는 게 좋음 | 사용 안 함|
+
+## Windows Defender 비활성화 (선택 사항)
+
+- 가벼운 시스템을 원한다면 Defender 비활성화도 고려할 수 있음. (단, 보안에 유의)
+```powershell
+Set-MpPreference -DisableRealtimeMonitoring $true
+```
+
+## 윈도우 업데이트 비활성화
+
+- 업데이트가 필요 없으면 비활성화할 수도 있어. (보안 업데이트는 비활성화하지 않는 게 좋음)
+```powershell
+sc config wuauserv start= disabled
+```
+
+## PowerShell 명령어 분석
+
+### 앱 제거 (Get-AppxPackage)
+
+- Microsoft.549981C3F5F10: Microsoft Store
+- Microsoft.ZuneMusic: Groove Music (이제 음악 앱)
+- Microsoft.ZuneVideo: Films & TV (이제 비디오 앱)
+- Microsoft.MicrosoftSolitaireCollection: 솔리테어 게임
+- Microsoft.WindowsFeedbackHub: 피드백 허브
+- Disney.37853FC22B2CE: Disney+ 앱
+- Xbox 관련 앱들: Xbox 게임 관련 앱들 (게임 저장, 오버레이, Xbox Game Bar 등)
+- YourPhone: 모바일 연결 앱 (전화, 문자 등)
+
+### 서비스 및 스케줄러 삭제 (sc delete, schtasks)
+
+- XblAuthManager / XblGameSave / XboxNetApiSvc / XboxGipSvc: Xbox와 관련된 서비스들을 완전히 삭제.
+- reg delete 명령어: Xbox 관련 레지스트리 항목 삭제
+- schtasks 명령어: Xbox 관련 예약 작업 비활성화.
+
+### GameDVR 설정 비활성화
+
+- reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\GameDVR": 게임 녹화 (GameDVR) 기능을 비활성화하는 레지스트리 수정.
+```powershell
+Get-AppxPackage -allusers *xbox* | Remove-AppxPackage
+Get-AppxPackage -allusers *solitaire* | Remove-AppxPackage
+Get-AppxPackage -allusers *zune* | Remove-AppxPackage
+Get-AppxPackage -allusers *skype* | Remove-AppxPackage
+Get-AppxPackage -allusers *people* | Remove-AppxPackage
 
 Get-appxpackage -allusers *Microsoft.549981C3F5F10* | Remove-AppxPackage
 Get-AppxPackage -allusers Microsoft.ZuneMusic | Remove-AppxPackage
@@ -27,7 +107,9 @@ schtasks /Change /TN "Microsoft\XblGameSave\XblGameSaveTaskLogon" /disable
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\GameDVR" /v AllowGameDVR /t REG_DWORD /d 0 /f
 ```
 
-```shell
+```powershell
+Get-AppxPackage | Select Name, PackageFamilyName
+
 Microsoft.UI.Xaml.CBS                           Microsoft.UI.Xaml.CBS_8wekyb3d8bbwe
 1527c705-839a-4832-9118-54d4Bd6a0c89            1527c705-839a-4832-9118-54d4Bd6a0c89_cw5n1h2txyewy
 c5e2524a-ea46-4f67-841f-6a9465d9d515            c5e2524a-ea46-4f67-841f-6a9465d9d515_cw5n1h2txyewy
