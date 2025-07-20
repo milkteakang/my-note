@@ -65,3 +65,21 @@ export TIME_STYLE=long-iso
 sudo pacman -S jdk-openjdk dbeaver
 yay -S visual-studio-code-bin sublime-text-4 filezilla google-chrome
 ```
+##### eclipse 등록
+
+```bash
+vi ~/.local/share/applications/eclipse.desktop
+[Desktop Entry]
+Name=Eclipse IDE
+Comment=Eclipse Integrated Development Environment
+Type=Application
+Encoding=UTF-8
+Exec=/home/ubuntu/eclipse/eclipse
+Icon=/home/ubuntu/eclipse/icon.xpm
+Categories=Development;IDE;Java;
+Terminal=false
+StartupNotify=true
+
+chmod +x ~/.local/share/applications/eclipse.desktop
+update-desktop-database ~/.local/share/applications
+```
